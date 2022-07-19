@@ -12,10 +12,14 @@ namespace FileReader
         {
             if (args.Length > 0)
             {
-                var lines = ReadIniFile(args[0]);
-                var objIniFile = ToObjIniFile<TestIniObj>(lines);
-                Console.WriteLine("Create object: " + objIniFile);
+                Console.WriteLine("Create object: " + MakeObject(args[0]));
             }
+        }
+
+        public static object MakeObject(string path)
+        {
+            var lines = ReadIniFile(path);
+            return ToObjIniFile<TestIniObj>(lines);
         }
 
         private static T ToObjIniFile<T>(Dictionary<string, string> lines) where T : class, new()
@@ -30,11 +34,8 @@ namespace FileReader
                 if (hasProperty)
                 {
                     var property = type.GetProperty(line.Key);
-
-                    if (string.IsNullOrEmpty(line.Value))
-                        throw new ArgumentException("The argument cannot be empty or null", line.Key);
-                    
-                    property?.SetValue(instance, Convert.ChangeType(line.Value, property.PropertyType), null);
+                    if (!string.IsNullOrEmpty(line.Value))
+                        property?.SetValue(instance, Convert.ChangeType(line.Value, property.PropertyType), null);
                 }
             }
             return (T)Convert.ChangeType(instance, typeof(T));
