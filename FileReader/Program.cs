@@ -6,21 +6,21 @@ using FileReader.Models;
 
 namespace FileReader
 {
-    class Program
+   public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            if (args.Length>0)
+            if (args.Length > 0)
             {
-                var objIniFile = ToObjIniFile<TestIniObj>(args[0]);
+                var lines = ReadIniFile(args[0]);
+                var objIniFile = ToObjIniFile<TestIniObj>(lines);
                 Console.WriteLine("Create object: " + objIniFile);
             }
         }
 
-        private static T ToObjIniFile<T>(string filename) where T : class, new()
+        private static T ToObjIniFile<T>(Dictionary<string, string> lines) where T : class, new()
         {
             var type = typeof(T);
-            var lines = ReadIniFile(filename);
             var instance = Activator.CreateInstance(type);
             var properties = typeof(T).GetProperties().ToList();
 
@@ -30,6 +30,10 @@ namespace FileReader
                 if (hasProperty)
                 {
                     var property = type.GetProperty(line.Key);
+
+                    if (string.IsNullOrEmpty(line.Value))
+                        throw new ArgumentException("The argument cannot be empty or null", line.Key);
+                    
                     property?.SetValue(instance, Convert.ChangeType(line.Value, property.PropertyType), null);
                 }
             }
