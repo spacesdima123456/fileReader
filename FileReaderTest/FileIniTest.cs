@@ -2,32 +2,47 @@
 using FileReader.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace FileReaderTest
 {
     [TestClass]
-    public class FileIniTest
+    public class FileIniTests
     {
-        private  string[] _args = new[] { "file.ini" };
-        private TestIniObj _testIniObj = new TestIniObj();
-        private TestIniObj _result = (TestIniObj)Program.MakeObject("file.ini" );
+        private string path = "../../../file.ini";
+        private readonly TestIniObj _testIniObj;
 
-        [TestMethod]
-        public void CheckInputParamInt()
+        public FileIniTests()
         {
-            Assert.AreNotEqual(_testIniObj.TestInt, _result.TestInt);
+            var iniFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), path);
+            _testIniObj = Program.ToObjIniFile<TestIniObj>(lines: Program.ReadIniFile(iniFile));
         }
 
         [TestMethod]
-        public void CheckInputParamString()
+        public void DecTest()
         {
-            Assert.AreNotEqual(_testIniObj.TestStr, _result.TestStr);
+            Assert.AreEqual(expected: 10, actual: _testIniObj.TestInt);
         }
 
         [TestMethod]
-        public void CheckInputParamBool()
+        public void BoolTest()
         {
-            Assert.AreNotEqual(_testIniObj.TestBool, _result.TestBool);
+            Assert.AreEqual(expected: true, actual: _testIniObj.TestBool);
+        }
+
+
+        [TestMethod]
+        public void CheckInputParamEmpty()
+        {
+            try
+            {
+                Program.Main(new string[] { path });
+            }
+            catch (ArgumentException ex)
+            {
+                Assert.Fail("Argument exception: " + ex.ParamName);
+            }
         }
     }
 }

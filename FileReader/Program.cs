@@ -10,10 +10,10 @@ namespace FileReader
     {
         public static void Main(string[] args)
         {
-            if (args.Length > 0)
-            {
-                Console.WriteLine("Create object: " + MakeObject(args[0]));
-            }
+            //if (args.Length > 0)
+          //  {
+                Console.WriteLine("Create object: " + MakeObject("../../../file.ini"));
+            //}
         }
 
         public static object MakeObject(string path)
@@ -22,7 +22,7 @@ namespace FileReader
             return ToObjIniFile<TestIniObj>(lines);
         }
 
-        private static T ToObjIniFile<T>(Dictionary<string, string> lines) where T : class, new()
+        public static T ToObjIniFile<T>(Dictionary<string, string> lines) where T : class, new()
         {
             var type = typeof(T);
             var instance = Activator.CreateInstance(type);
@@ -41,7 +41,7 @@ namespace FileReader
             return (T)Convert.ChangeType(instance, typeof(T));
         }
 
-        private static Dictionary<string, string> ReadIniFile(string path)=> 
+        public static Dictionary<string, string> ReadIniFile(string path)=> 
             File.ReadAllLines(path)
                 .Where(w => w != string.Empty)
                 .ToDictionary(s => s.Split('=')[0].Trim(), s => s.Split('=')[1].Trim());
