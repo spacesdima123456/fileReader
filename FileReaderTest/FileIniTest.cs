@@ -33,16 +33,9 @@ namespace FileReaderTest
 
 
         [TestMethod]
-        public void CheckInputParamEmpty()
+        public void StringTest()
         {
-            try
-            {
-                Program.Main(new string[] { path });
-            }
-            catch (ArgumentException ex)
-            {
-                Assert.Fail("Argument exception: " + ex.ParamName);
-            }
+            Assert.AreEqual(expected: "Test111", actual: _testIniObj.TestStr);
         }
     }
 }
